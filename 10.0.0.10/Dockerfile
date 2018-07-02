@@ -53,7 +53,7 @@ ENV BASH_ENV=/usr/local/bin/iib_env.sh
 ENV MQSI_MQTT_LOCAL_HOSTNAME=127.0.0.1
 
 # Install openssh
-RUN apt-get install -y openssh-server
+RUN apt-get update && apt-get install -y openssh-server
 RUN mkdir /var/run/sshd
 
 RUN echo 'root:root' |chpasswd
