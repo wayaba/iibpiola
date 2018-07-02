@@ -53,21 +53,26 @@ ENV BASH_ENV=/usr/local/bin/iib_env.sh
 ENV MQSI_MQTT_LOCAL_HOSTNAME=127.0.0.1
 
 # Install openssh
-RUN apt-get update && apt-get install -y openssh-server
+RUN apt-get install -y openssh-server
 RUN mkdir /var/run/sshd
-RUN echo 'root:iibpiola' | chpasswd
-RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
-# SSH login fix. Otherwise user is kicked off after login
-RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+RUN echo 'root:root' |chpasswd
 
-ENV NOTVISIBLE "in users profile"
-RUN echo "export VISIBLE=now" >> /etc/profile
+RUN sed -ri 's/^#?PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
+
+RUN mkdir /root/.ssh
+
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+EXPOSE 22
+
+CMD    ["/usr/sbin/sshd", "-D"]
 
 # Expose default admin port and http port
-EXPOSE 4414 7800 22
+EXPOSE 4414 7800 
 
-CMD ["/usr/sbin/sshd", "-D"]
 
 USER iibuser
 
