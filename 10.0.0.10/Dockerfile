@@ -71,7 +71,7 @@ EXPOSE 22
 CMD    ["/usr/sbin/sshd", "-D"]
 
 # Install dependecies and xvfb
-RUN apt-get --assume-yes install libswt-gtk-3-jni libswt-gtk-3-java xvfb
+RUN apt-get update && apt-get --assume-yes install libswt-gtk-3-jni libswt-gtk-3-java xvfb
 
 # Expose default admin port and http port
 EXPOSE 4414 7800 
